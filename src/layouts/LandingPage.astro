@@ -1,6 +1,6 @@
 ---
 import MediaSlot from "../components/MediaSlot.astro";
-import { media } from "../config/media";
+import { heroVideos, media } from "../config/media";
 import { appStoreUrl, contactEmail, content, privacyUrl, termsUrl, type Locale } from "../i18n/content";
 import "../styles/site.css";
 
@@ -87,9 +87,9 @@ const appSchema = {
         <div class="hero-stage" aria-label={copy.heroMediaLabel}>
           <div class="stage-header"><span>TUNE / TRACE</span><span>01—03</span></div>
           <div class="phone-shell">
-            <div class="phone-top" aria-hidden="true"></div>
             <MediaSlot
-              src={media.heroVideo}
+              src={heroVideos[locale].src}
+              poster={heroVideos[locale].poster}
               kind="video"
               label={copy.heroMediaLabel}
               emptyText={copy.heroMediaEmpty}
