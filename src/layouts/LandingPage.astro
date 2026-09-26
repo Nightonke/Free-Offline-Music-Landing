@@ -82,19 +82,29 @@ const appSchema = {
           </div>
         </div>
 
-        <div class="hero-stage" aria-label={copy.heroMediaLabel}>
-          <div class="phone-shell">
-            <MediaSlot
-              src={heroVideos[locale].src}
-              poster={heroVideos[locale].poster}
-              kind="video"
-              label={copy.heroMediaLabel}
-              emptyText={copy.heroMediaEmpty}
-              filename={copy.heroMediaFilename}
-              alt={copy.heroMediaLabel}
-              className="hero-media"
-            />
+        <div class="hero-showcase">
+          <div class="hero-stage" aria-label={copy.heroMediaLabel}>
+            <div class="phone-shell">
+              <MediaSlot
+                src={heroVideos[locale].src}
+                poster={heroVideos[locale].poster}
+                kind="video"
+                label={copy.heroMediaLabel}
+                emptyText={copy.heroMediaEmpty}
+                filename={copy.heroMediaFilename}
+                alt={copy.heroMediaLabel}
+                className="hero-media"
+              />
+            </div>
           </div>
+          <nav class="hero-chapters" aria-label={locale === "en" ? "Video scenes" : "视频片段"}>
+            {heroVideos[locale].chapters.map((chapter, index) => (
+              <button type="button" data-hero-chapter data-start={chapter.start} aria-current={index === 0 ? "time" : undefined}>
+                <span class="hero-chapter-number" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
+                <span>{chapter.text}</span>
+              </button>
+            ))}
+          </nav>
         </div>
       </section>
 
@@ -206,5 +216,44 @@ const appSchema = {
       </div>
       <p>{copy.copyright}</p>
     </footer>
+    <script>
+      document.querySelectorAll<HTMLElement>(".hero-showcase").forEach((showcase) => {
+        const video = showcase.querySelector<HTMLVideoElement>("video");
+        const chapters = Array.from(showcase.querySelectorAll<HTMLButtonElement>("[data-hero-chapter]"));
+        if (!video || chapters.length === 0) return;
+
+        const updateChapter = () => {
+          let current = 0;
+          chapters.forEach((chapter, index) => {
+            if (video.currentTime >= Number(chapter.dataset.start)) current = index;
+          });
+          chapters.forEach((chapter, index) => {
+            const start = Number(chapter.dataset.start);
+            const end = index + 1 < chapters.length ? Number(chapters[index + 1].dataset.start) : video.duration;
+            const progress = Number.isFinite(end) && end > start
+              ? Math.max(0, Math.min(100, ((video.currentTime - start) / (end - start)) * 100))
+              : 0;
+            chapter.style.setProperty("--chapter-progress", `${progress}%`);
+            if (index === current) chapter.setAttribute("aria-current", "time");
+            else chapter.removeAttribute("aria-current");
+          });
+        };
+
+        chapters.forEach((chapter) => chapter.addEventListener("click", () => {
+          const seek = () => {
+            video.currentTime = Number(chapter.dataset.start);
+            updateChapter();
+            void video.play().catch(() => {});
+          };
+          if (video.readyState >= HTMLMediaElement.HAVE_METADATA) seek();
+          else video.addEventListener("loadedmetadata", seek, { once: true });
+        }));
+
+        video.addEventListener("timeupdate", updateChapter);
+        video.addEventListener("seeked", updateChapter);
+        video.addEventListener("loadedmetadata", updateChapter);
+        updateChapter();
+      });
+    </script>
   </body>
 </html>

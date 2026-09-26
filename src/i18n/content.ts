@@ -19,7 +19,7 @@ export const content = {
     explore: "See how it works",
     heroTitle: ["Record songs from music apps.", "Listen offline for free, forever."],
     heroDescription:
-      "Record songs, shows, and audio from videos in QQ Music, Kugou Music, Apple Music, or NetEase Cloud Music when recording is supported—or import files you already have. TuneTrace automatically splits recordings into clips, identifies songs, and organizes your local library for offline listening, without another monthly subscription.",
+      "Record songs and shows playing in Apple Music, Spotify, YouTube Music, Amazon Music, and other apps when iOS and the source app allow it. You can also capture audio from videos or import files you already have. TuneTrace automatically splits recordings into clips, identifies songs, and organizes your local library for offline listening, without another monthly subscription.",
     heroUseCasesLabel: "Made for moments like these:",
     heroUseCases: [
       "I just want to listen to songs I've saved, without paying every month for the same music.",
