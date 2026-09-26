@@ -1,7 +1,7 @@
 ---
 import MediaSlot from "../components/MediaSlot.astro";
-import { heroVideos, media } from "../config/media";
-import { appStoreUrl, contactEmail, content, privacyUrl, termsUrl, type Locale } from "../i18n/content";
+import { heroVideos, media, type MediaLocale } from "../config/media";
+import { appStoreUrl, contactEmail, content, locales, privacyUrl, termsUrl, type Locale } from "../i18n/content";
 import "../styles/site.css";
 
 interface Props {
@@ -10,12 +10,13 @@ interface Props {
 
 const { locale } = Astro.props;
 const copy = content[locale];
-const otherLocale = locale === "en" ? "zh-Hans" : "en";
+const currentLocale = locales.find((item) => item.code === locale)!;
+const mediaLocale: MediaLocale = locale === "zh-Hans" ? "zh-Hans" : "en";
 const canonical = new URL(copy.path, Astro.site ?? "https://freeofflinemusic.com").href;
 const appSchema = {
   "@context": "https://schema.org",
   "@type": "MobileApplication",
-  name: locale === "en" ? "TuneTrace: Record Device Audio" : "TuneTrace 拾曲",
+  name: locale.startsWith("zh") ? "TuneTrace 拾曲" : "TuneTrace: Record Device Audio",
   description: copy.description,
   url: canonical,
   downloadUrl: appStoreUrl,
@@ -34,8 +35,7 @@ const appSchema = {
     <title>{copy.title}</title>
     <meta name="description" content={copy.description} />
     <link rel="canonical" href={canonical} />
-    <link rel="alternate" hreflang="en" href="https://freeofflinemusic.com/" />
-    <link rel="alternate" hreflang="zh-Hans" href="https://freeofflinemusic.com/zh-Hans/" />
+    {locales.map((item) => <link rel="alternate" hreflang={item.code} href={new URL(item.path, Astro.site ?? "https://freeofflinemusic.com").href} />)}
     <link rel="alternate" hreflang="x-default" href="https://freeofflinemusic.com/" />
     <link rel="icon" type="image/png" href="/assets/app-icon.png" />
     <link rel="sitemap" href="/sitemap-index.xml" />
@@ -43,11 +43,11 @@ const appSchema = {
     <meta property="og:title" content={copy.title} />
     <meta property="og:description" content={copy.description} />
     <meta property="og:url" content={canonical} />
-    <meta property="og:locale" content={locale === "en" ? "en_US" : "zh_CN"} />
+    <meta property="og:locale" content={currentLocale.ogLocale} />
     <script type="application/ld+json" set:html={JSON.stringify(appSchema)} />
   </head>
   <body>
-    <a class="skip-link" href="#main">{locale === "en" ? "Skip to content" : "跳到主要内容"}</a>
+    <a class="skip-link" href="#main">{copy.ui.skip}</a>
 
     <div class="header-wrap">
       <header class="site-header shell">
@@ -55,14 +55,23 @@ const appSchema = {
           <img src="/assets/app-icon.png" alt="" width="37" height="37" />
           <span>TuneTrace <span class="brand-zh">{locale === "zh-Hans" ? "拾曲" : ""}</span></span>
         </a>
-        <nav class="desktop-nav" aria-label={locale === "en" ? "Main navigation" : "主导航"}>
+        <nav class="desktop-nav" aria-label={copy.ui.navigation}>
           <a href="#how-it-works">{copy.nav.how}</a>
           <a href="#features">{copy.nav.features}</a>
           <a href="#faq">{copy.nav.faq}</a>
         </nav>
         <div class="header-actions">
-          <a class="language-link" href={content[otherLocale].path} lang={otherLocale === "en" ? "en" : "zh-Hans"}>{copy.language}</a>
-          <a class="header-download" href={appStoreUrl} target="_blank" rel="noopener noreferrer">{locale === "en" ? "Get the app" : "下载 App"}<span aria-hidden="true">↗</span></a>
+          <details class="language-menu">
+            <summary aria-label={copy.ui.languages}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.5 3.8 5.5 3.8 9S14.5 18.5 12 21M12 3C9.5 5.5 8.2 8.5 8.2 12S9.5 18.5 12 21"/></svg>
+              <span>{currentLocale.name}</span>
+              <span class="language-menu__chevron" aria-hidden="true">⌄</span>
+            </summary>
+            <div class="language-menu__panel">
+              {locales.map((item) => <a href={item.path} lang={item.code} aria-current={item.code === locale ? "page" : undefined}>{item.name}</a>)}
+            </div>
+          </details>
+          <a class="header-download" href={appStoreUrl} target="_blank" rel="noopener noreferrer">{copy.ui.getApp}<span aria-hidden="true">↗</span></a>
         </div>
       </header>
     </div>
@@ -86,8 +95,8 @@ const appSchema = {
           <div class="hero-stage" aria-label={copy.heroMediaLabel}>
             <div class="phone-shell">
               <MediaSlot
-                src={heroVideos[locale].src}
-                poster={heroVideos[locale].poster}
+                src={heroVideos[mediaLocale].src}
+                poster={heroVideos[mediaLocale].poster}
                 kind="video"
                 label={copy.heroMediaLabel}
                 emptyText={copy.heroMediaEmpty}
@@ -97,11 +106,11 @@ const appSchema = {
               />
             </div>
           </div>
-          <nav class="hero-chapters" aria-label={locale === "en" ? "Video scenes" : "视频片段"}>
-            {heroVideos[locale].chapters.map((chapter, index) => (
-              <button type="button" data-hero-chapter data-start={chapter.start} aria-current={index === 0 ? "time" : undefined}>
+          <nav class="hero-chapters" aria-label={copy.ui.videoScenes}>
+            {heroVideos[mediaLocale].chapterStarts.map((start, index) => (
+              <button type="button" data-hero-chapter data-start={start} aria-current={index === 0 ? "time" : undefined}>
                 <span class="hero-chapter-number" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
-                <span>{chapter.text}</span>
+                <span>{copy.videoChapters[index]}</span>
               </button>
             ))}
           </nav>
@@ -113,7 +122,7 @@ const appSchema = {
         <ul>{copy.heroUseCases.map((item) => <li>{item}</li>)}</ul>
       </section>
 
-      <div class="capability-band" aria-label={locale === "en" ? "TuneTrace capabilities" : "拾曲功能"}>
+      <div class="capability-band" aria-label={copy.ui.capabilities}>
         <div class="capability-band__inner">
           {copy.ribbon.map((item, index) => <span>{item}{index < copy.ribbon.length - 1 && <img class="capability-band__note" src="/assets/music-note.svg" width="18" height="18" alt="" aria-hidden="true" />}</span>)}
         </div>
@@ -150,8 +159,8 @@ const appSchema = {
                 <span class="feature-media-board__index">{String(index + 1).padStart(2, "0")}</span>
                 <img
                   class="feature-screenshot"
-                  src={media[locale][feature.id].src}
-                  alt={media[locale][feature.id].alt}
+                  src={media[mediaLocale][feature.id].src}
+                  alt={locale === "en" || locale === "zh-Hans" ? media[mediaLocale][feature.id].alt : feature.title}
                   width="787"
                   height="1400"
                   loading="lazy"
@@ -212,7 +221,6 @@ const appSchema = {
         <a href={privacyUrl} target="_blank" rel="noopener noreferrer">{copy.privacy}</a>
         <a href={termsUrl} target="_blank" rel="noopener noreferrer">{copy.terms}</a>
         <a href={`mailto:${contactEmail}`}>{copy.contact}</a>
-        <a href={content[otherLocale].path} lang={otherLocale === "en" ? "en" : "zh-Hans"}>{copy.language}</a>
       </div>
       <p>{copy.copyright}</p>
     </footer>

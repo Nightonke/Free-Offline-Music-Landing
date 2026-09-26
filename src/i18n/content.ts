@@ -1,4 +1,19 @@
-export type Locale = "en" | "zh-Hans";
+import { additionalContent } from "./additionalContent";
+import { westernContent } from "./westernContent";
+
+export const locales = [
+  { code: "en", path: "/", name: "English", ogLocale: "en_US" },
+  { code: "zh-Hans", path: "/zh-Hans/", name: "简体中文", ogLocale: "zh_CN" },
+  { code: "zh-Hant", path: "/zh-Hant/", name: "繁體中文", ogLocale: "zh_TW" },
+  { code: "ja", path: "/ja/", name: "日本語", ogLocale: "ja_JP" },
+  { code: "de", path: "/de/", name: "Deutsch", ogLocale: "de_DE" },
+  { code: "es", path: "/es/", name: "Español", ogLocale: "es_ES" },
+  { code: "ko", path: "/ko/", name: "한국어", ogLocale: "ko_KR" },
+  { code: "pt-BR", path: "/pt-BR/", name: "Português (Brasil)", ogLocale: "pt_BR" },
+  { code: "fr", path: "/fr/", name: "Français", ogLocale: "fr_FR" },
+] as const;
+
+export type Locale = (typeof locales)[number]["code"];
 
 export const appStoreUrl = "https://apps.apple.com/app/id6782514658";
 export const privacyUrl = "https://daysinyear.github.io/tt/privacy.html";
@@ -14,6 +29,7 @@ export const content = {
       "Download TuneTrace free. Record permitted songs and shows from other apps or import files, identify music, and listen from a local library. Your first 30 songs play in full for free.",
     eyebrow: "TUNETRACE · FREE TO DOWNLOAD · IPHONE",
     nav: { how: "How it works", features: "Features", faq: "FAQ" },
+    ui: { skip: "Skip to content", navigation: "Main navigation", getApp: "Get the app", videoScenes: "Video scenes", capabilities: "TuneTrace capabilities", languages: "Language" },
     language: "中文",
     download: "Download free on the App Store",
     explore: "See how it works",
@@ -29,6 +45,12 @@ export const content = {
     heroMediaLabel: "APP PREVIEW",
     heroMediaEmpty: "Your app preview video goes here",
     heroMediaFilename: "hero-preview.mp4",
+    videoChapters: [
+      "Play music in any app. TuneTrace records and identifies it.",
+      "Save the songs to local library.",
+      "Listen anytime, even offline.",
+      "A simple, intuitive player. Always ad-free.",
+    ],
     ribbon: ["Record audio from apps", "Import files", "Split long recordings", "Identify songs", "Build your library"],
     sectionLabel: "A SIMPLE FLOW",
     sectionTitle: "What plays on your phone is yours to keep.",
@@ -122,6 +144,7 @@ export const content = {
       "免费下载 TuneTrace 拾曲：录制其他 App 中允许录制的歌曲、节目等音频，或导入自己的文件，切段识曲并保存到本地曲库。免费版前 30 首歌曲可完整播放。",
     eyebrow: "TUNETRACE 拾曲 · 免费下载 · IPHONE",
     nav: { how: "使用方法", features: "功能", faq: "常见问题" },
+    ui: { skip: "跳到主要内容", navigation: "主导航", getApp: "下载 App", videoScenes: "视频片段", capabilities: "拾曲功能", languages: "语言" },
     language: "English",
     download: "前往 App Store 免费下载",
     explore: "了解使用方法",
@@ -137,6 +160,12 @@ export const content = {
     heroMediaLabel: "APP 预览",
     heroMediaEmpty: "这里留给 App 预览视频",
     heroMediaFilename: "hero-preview.mp4",
+    videoChapters: [
+      "播放其他 App 的歌曲，拾曲会录制并识别。",
+      "挑选想留下的歌曲，保存至本地曲库。",
+      "随时播放曲库歌曲，无需联网。",
+      "简洁好用的播放器，永无广告。",
+    ],
     ribbon: ["录制其他 App 的音频", "导入文件", "长录音切段", "识别歌曲", "建立本地曲库"],
     sectionLabel: "简单三步",
     sectionTitle: "手机能播放的，都是您自己的",
@@ -211,4 +240,6 @@ export const content = {
     mediaKindImage: "图片空位",
     mediaKindVideo: "视频空位",
   },
+  ...additionalContent,
+  ...westernContent,
 } as const;
