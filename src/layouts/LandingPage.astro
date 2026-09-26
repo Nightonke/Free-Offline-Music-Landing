@@ -12,6 +12,7 @@ const { locale } = Astro.props;
 const copy = content[locale];
 const currentLocale = locales.find((item) => item.code === locale)!;
 const mediaLocale: MediaLocale = locale === "zh-Hans" ? "zh-Hans" : "en";
+const legalReturnQuery = locale === "en" ? "" : `?from=${encodeURIComponent(locale)}`;
 const canonical = new URL(copy.path, Astro.site ?? "https://freeofflinemusic.com").href;
 const appSchema = {
   "@context": "https://schema.org",
@@ -65,7 +66,7 @@ const appSchema = {
             <summary aria-label={copy.ui.languages}>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.5 3.8 5.5 3.8 9S14.5 18.5 12 21M12 3C9.5 5.5 8.2 8.5 8.2 12S9.5 18.5 12 21"/></svg>
               <span>{currentLocale.name}</span>
-              <span class="language-menu__chevron" aria-hidden="true">⌄</span>
+              <svg class="language-menu__chevron" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 5.25 4 4 4-4" /></svg>
             </summary>
             <div class="language-menu__panel">
               {locales.map((item) => <a href={item.path} lang={item.code} aria-current={item.code === locale ? "page" : undefined}>{item.name}</a>)}
@@ -218,8 +219,8 @@ const appSchema = {
     <footer class="site-footer shell">
       <div class="footer-brand"><img src="/assets/app-icon.png" alt="" width="44" height="44" /><div><strong>TuneTrace</strong><span>{copy.footerSummary}</span></div></div>
       <div class="footer-links">
-        <a href={privacyUrl} target="_blank" rel="noopener noreferrer">{copy.privacy}</a>
-        <a href={termsUrl} target="_blank" rel="noopener noreferrer">{copy.terms}</a>
+        <a href={`${privacyUrl}${legalReturnQuery}`}>{copy.privacy}</a>
+        <a href={`${termsUrl}${legalReturnQuery}`}>{copy.terms}</a>
         <a href={`mailto:${contactEmail}`}>{copy.contact}</a>
       </div>
       <p>{copy.copyright}</p>

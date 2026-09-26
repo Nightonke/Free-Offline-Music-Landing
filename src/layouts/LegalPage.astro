@@ -1,0 +1,69 @@
+---
+import privacyHtml from "../legal/privacy.html?raw";
+import termsHtml from "../legal/terms.html?raw";
+import { locales } from "../i18n/content";
+import "../styles/site.css";
+import "../styles/legal.css";
+
+interface Props {
+  kind: "privacy" | "terms";
+}
+
+const { kind } = Astro.props;
+const isPrivacy = kind === "privacy";
+const title = isPrivacy ? "TuneTrace Privacy Policy" : "TuneTrace Terms of Use";
+const path = isPrivacy ? "/privacy/" : "/terms/";
+const documentHtml = isPrivacy ? privacyHtml : termsHtml;
+const canonical = new URL(path, Astro.site ?? "https://freeofflinemusic.com").href;
+const returnPaths = Object.fromEntries(locales.map((item) => [item.code, item.path]));
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f4f1e8" />
+    <title>{title}</title>
+    <meta name="description" content={`${title}. Read how TuneTrace handles audio, local files, purchases, and your use of the app.`} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" type="image/png" href="/assets/app-icon.png" />
+  </head>
+  <body class="legal-page">
+    <a class="skip-link" href="#main">Skip to content</a>
+    <div class="header-wrap">
+      <header class="legal-header site-header shell">
+        <a class="brand" href="/" data-return-home aria-label="TuneTrace home">
+          <img src="/assets/app-icon.png" alt="" width="37" height="37" />
+          <span>TuneTrace</span>
+        </a>
+        <nav class="legal-nav" aria-label="Legal pages">
+          <a href="/privacy/" data-legal-nav aria-current={isPrivacy ? "page" : undefined}>Privacy Policy</a>
+          <a href="/terms/" data-legal-nav aria-current={!isPrivacy ? "page" : undefined}>Terms of Use</a>
+        </nav>
+        <a class="legal-home" href="/" data-return-home>Back to site <span aria-hidden="true">↗</span></a>
+      </header>
+    </div>
+
+    <main id="main" class="legal-main shell">
+      <p class="kicker">TUNETRACE / LEGAL</p>
+      <article class="legal-document" set:html={documentHtml} />
+    </main>
+
+    <footer class="legal-footer shell">
+      <span>© 2026 Smith Night</span>
+      <a href="mailto:support@nightonke.com">support@nightonke.com</a>
+    </footer>
+    <script define:vars={{ returnPaths }}>
+      const from = new URLSearchParams(window.location.search).get("from");
+      if (from && Object.hasOwn(returnPaths, from)) {
+        document.querySelectorAll("[data-return-home]").forEach((link) => link.setAttribute("href", returnPaths[from]));
+        document.querySelectorAll("[data-legal-nav]").forEach((link) => {
+          const url = new URL(link.href);
+          url.searchParams.set("from", from);
+          link.setAttribute("href", `${url.pathname}${url.search}`);
+        });
+      }
+    </script>
+  </body>
+</html>

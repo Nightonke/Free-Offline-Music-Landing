@@ -1,6 +1,6 @@
 # Free Offline Music Landing
 
-Standalone bilingual landing site for TuneTrace / 拾曲 at `freeofflinemusic.com`.
+Standalone multilingual landing site for TuneTrace / 拾曲 at `freeofflinemusic.com`.
 Built with Astro as a static site. This is a separate Git repository from the
 iOS app and the two other landing sites.
 
@@ -12,7 +12,9 @@ npm run dev
 ```
 
 Open the local URL printed by Astro. English is at `/`; Simplified Chinese is at
-`/zh-Hans/`. To verify a production build, run `npm run build`.
+`/zh-Hans/`. Traditional Chinese, Japanese, German, Spanish, Korean, Brazilian
+Portuguese, and French also have their own routes. To verify a production build,
+run `npm run build`.
 
 ## Media
 
@@ -24,20 +26,27 @@ content. The matching poster frames and video paths are set in
 Each feature section shows one App Store screenshot: recording, recording
 review, or the local library. English and Simplified Chinese versions are
 configured in `src/config/media.ts` and stored in `public/media/screenshots/`.
+All languages except Simplified Chinese use the English video and screenshots.
 The source HEIF files were converted to transparent 787 × 1400 PNGs for browser
 support.
 
 ## Content and links
 
-- English and Chinese copy: `src/i18n/content.ts`
+- Locale definitions and English/Simplified Chinese copy: `src/i18n/content.ts`
+- Additional translations: `src/i18n/additionalContent.ts` and `src/i18n/westernContent.ts`
 - App Store URL: `src/i18n/content.ts`
 - Colors and layout: `src/styles/site.css`
 - Site domain and sitemap: `astro.config.mjs`
 
-The footer currently links to TuneTrace's existing privacy policy and terms
-pages. Check those links and the App Store listing together before publishing.
+The footer links to English copies of TuneTrace's existing privacy policy and
+terms, hosted at `/privacy/` and `/terms/`. Their original text is stored in
+`src/legal/`.
 The free plan text reflects the current iOS implementation: unlimited saves,
 full playback for the first 30 saved songs, and 45-second previews afterward.
+
+The Astro sitemap integration generates `/sitemap-index.xml` and includes the
+language alternatives for all nine landing routes. `public/robots.txt` points
+to that index.
 
 ## Deployment
 

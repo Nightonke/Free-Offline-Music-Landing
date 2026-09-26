@@ -16,8 +16,8 @@ export const locales = [
 export type Locale = (typeof locales)[number]["code"];
 
 export const appStoreUrl = "https://apps.apple.com/app/id6782514658";
-export const privacyUrl = "https://daysinyear.github.io/tt/privacy.html";
-export const termsUrl = "https://daysinyear.github.io/tt/user.html";
+export const privacyUrl = "/privacy/";
+export const termsUrl = "/terms/";
 export const contactEmail = "daysinyear@foxmail.com";
 
 export const content = {
