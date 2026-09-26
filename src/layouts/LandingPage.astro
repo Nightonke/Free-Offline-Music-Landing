@@ -1,0 +1,206 @@
+---
+import MediaSlot from "../components/MediaSlot.astro";
+import { media } from "../config/media";
+import { appStoreUrl, contactEmail, content, privacyUrl, termsUrl, type Locale } from "../i18n/content";
+import "../styles/site.css";
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const copy = content[locale];
+const otherLocale = locale === "en" ? "zh-Hans" : "en";
+const canonical = new URL(copy.path, Astro.site ?? "https://freeofflinemusic.com").href;
+const appSchema = {
+  "@context": "https://schema.org",
+  "@type": "MobileApplication",
+  name: locale === "en" ? "TuneTrace: Record Device Audio" : "TuneTrace 拾曲",
+  description: copy.description,
+  url: canonical,
+  downloadUrl: appStoreUrl,
+  operatingSystem: "iOS 16.0 or later",
+  applicationCategory: "MultimediaApplication",
+  offers: { "@type": "Offer", price: 0, priceCurrency: "USD" },
+};
+---
+
+<!doctype html>
+<html lang={copy.lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f4f1e8" />
+    <title>{copy.title}</title>
+    <meta name="description" content={copy.description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="alternate" hreflang="en" href="https://freeofflinemusic.com/" />
+    <link rel="alternate" hreflang="zh-Hans" href="https://freeofflinemusic.com/zh-Hans/" />
+    <link rel="alternate" hreflang="x-default" href="https://freeofflinemusic.com/" />
+    <link rel="icon" type="image/png" href="/assets/app-icon.png" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={copy.title} />
+    <meta property="og:description" content={copy.description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content={locale === "en" ? "en_US" : "zh_CN"} />
+    <script type="application/ld+json" set:html={JSON.stringify(appSchema)} />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">{locale === "en" ? "Skip to content" : "跳到主要内容"}</a>
+
+    <div class="header-wrap">
+      <header class="site-header shell">
+        <a class="brand" href={copy.path} aria-label="TuneTrace">
+          <img src="/assets/app-icon.png" alt="" width="37" height="37" />
+          <span>TuneTrace <span class="brand-zh">{locale === "zh-Hans" ? "拾曲" : ""}</span></span>
+        </a>
+        <nav class="desktop-nav" aria-label={locale === "en" ? "Main navigation" : "主导航"}>
+          <a href="#how-it-works">{copy.nav.how}</a>
+          <a href="#features">{copy.nav.features}</a>
+          <a href="#free">{copy.nav.free}</a>
+          <a href="#faq">{copy.nav.faq}</a>
+        </nav>
+        <div class="header-actions">
+          <a class="language-link" href={content[otherLocale].path} lang={otherLocale === "en" ? "en" : "zh-Hans"}>{copy.language}</a>
+          <a class="header-download" href={appStoreUrl} target="_blank" rel="noopener noreferrer">{locale === "en" ? "Get the app" : "下载 App"}<span aria-hidden="true">↗</span></a>
+        </div>
+      </header>
+    </div>
+
+    <main id="main">
+      <section class="hero shell">
+        <div class="hero-copy">
+          <p class="eyebrow"><span class="eyebrow-pulse"></span>{copy.eyebrow}</p>
+          <h1>{copy.heroTitle[0]}<br /><span>{copy.heroTitle[1]}</span></h1>
+          <p class="hero-description">{copy.heroDescription}</p>
+          <div class="hero-actions">
+            <a class="button button-dark" href={appStoreUrl} target="_blank" rel="noopener noreferrer">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.77 12.72c.02 2.19 1.93 2.92 1.95 2.93-.02.05-.3 1.05-1 2.08-.61.9-1.25 1.79-2.26 1.81-.99.02-1.31-.59-2.45-.59-1.13 0-1.49.57-2.43.61-.98.04-1.73-.98-2.35-1.87-1.28-1.84-2.26-5.19-.95-7.46.65-1.13 1.82-1.85 3.09-1.87.96-.02 1.87.65 2.45.65.58 0 1.67-.8 2.81-.68.48.02 1.83.19 2.7 1.47-.07.05-1.61.94-1.59 2.92Zm-1.89-5.65c.51-.62.85-1.48.76-2.33-.73.03-1.62.49-2.14 1.1-.47.54-.88 1.41-.77 2.24.81.06 1.64-.41 2.15-1.01Z"/></svg>
+              <span>{copy.download}</span>
+            </a>
+            <a class="text-action" href="#how-it-works">{copy.explore}<span aria-hidden="true">↘</span></a>
+          </div>
+          <p class="hero-note"><span class="note-star" aria-hidden="true">✳</span>{copy.heroNote}</p>
+        </div>
+
+        <div class="hero-stage" aria-label={copy.heroMediaLabel}>
+          <div class="stage-header"><span>TUNE / TRACE</span><span>01—03</span></div>
+          <div class="phone-shell">
+            <div class="phone-top" aria-hidden="true"></div>
+            <MediaSlot
+              src={media.heroVideo}
+              kind="video"
+              label={copy.heroMediaLabel}
+              emptyText={copy.heroMediaEmpty}
+              filename={copy.heroMediaFilename}
+              alt={copy.heroMediaLabel}
+              className="hero-media"
+            />
+          </div>
+          <div class="stage-footer">
+            {copy.stageTags.map((tag, index) => <span><b>{String(index + 1).padStart(2, "0")}</b> {tag}</span>)}
+          </div>
+        </div>
+      </section>
+
+      <div class="capability-band" aria-label={locale === "en" ? "TuneTrace capabilities" : "拾曲功能"}>
+        <div class="capability-band__inner">
+          {copy.ribbon.map((item, index) => <span>{item}<b aria-hidden="true">{index < copy.ribbon.length - 1 ? "✳" : ""}</b></span>)}
+        </div>
+      </div>
+
+      <section class="how section shell" id="how-it-works">
+        <div class="section-heading">
+          <p class="kicker">{copy.sectionLabel}</p>
+          <h2>{copy.sectionTitle}</h2>
+          <p>{copy.sectionDescription}</p>
+        </div>
+        <div class="steps-grid">
+          {copy.steps.map((step) => (
+            <article class="step-card">
+              <div class="step-card__top"><span>{step.number}</span><span aria-hidden="true">↗</span></div>
+              <h3>{step.title}</h3>
+              <p>{step.description}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <div id="features" class="feature-list">
+        {copy.features.map((feature, index) => (
+          <section class:list={["feature-section", { "feature-section--alt": index % 2 === 1 }]}>
+            <div class="feature-grid shell">
+              <div class="feature-copy">
+                <p class="kicker"><span>{feature.number}</span> {copy.featuresLabel}</p>
+                <h2>{feature.title}</h2>
+                <p class="feature-description">{feature.description}</p>
+                <ul>{feature.bullets.map((bullet) => <li>{bullet}</li>)}</ul>
+              </div>
+              <div class="feature-media-board">
+                <span class="feature-media-board__index">{String(index + 1).padStart(2, "0")}</span>
+                <MediaSlot
+                  src={media[feature.id]}
+                  kind="image"
+                  label={feature.mediaLabel}
+                  emptyText={feature.mediaEmpty}
+                  filename={feature.mediaFilename}
+                  alt={feature.mediaAlt}
+                  className="feature-media"
+                />
+              </div>
+            </div>
+          </section>
+        ))}
+      </div>
+
+      <section class="free-section section" id="free">
+        <div class="shell free-grid">
+          <div class="free-copy">
+            <p class="kicker">{copy.freeLabel}</p>
+            <h2>{copy.freeTitle}</h2>
+            <p>{copy.freeDescription}</p>
+          </div>
+          <div class="free-facts">
+            {copy.freeFacts.map((fact) => <div><strong>{fact.value}</strong><span>{fact.label}</span></div>)}
+          </div>
+        </div>
+      </section>
+
+      <section class="faq-section section shell" id="faq">
+        <div class="faq-heading">
+          <p class="kicker">{copy.faqLabel}</p>
+          <h2>{copy.faqTitle}</h2>
+        </div>
+        <div class="faq-list">
+          {copy.faqs.map((item) => (
+            <details>
+              <summary>{item.question}<span aria-hidden="true">+</span></summary>
+              <p>{item.answer}</p>
+            </details>
+          ))}
+        </div>
+      </section>
+
+      <section class="closing shell">
+        <div class="closing-panel">
+          <p class="kicker">{copy.closingLabel}</p>
+          <h2>{copy.closingTitle}</h2>
+          <p>{copy.closingDescription}</p>
+          <a class="button button-dark" href={appStoreUrl} target="_blank" rel="noopener noreferrer">{copy.download}<span aria-hidden="true">↗</span></a>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer shell">
+      <div class="footer-brand"><img src="/assets/app-icon.png" alt="" width="44" height="44" /><div><strong>TuneTrace</strong><span>{copy.footerSummary}</span></div></div>
+      <div class="footer-links">
+        <a href={privacyUrl} target="_blank" rel="noopener noreferrer">{copy.privacy}</a>
+        <a href={termsUrl} target="_blank" rel="noopener noreferrer">{copy.terms}</a>
+        <a href={`mailto:${contactEmail}`}>{copy.contact}</a>
+        <a href={content[otherLocale].path} lang={otherLocale === "en" ? "en" : "zh-Hans"}>{copy.language}</a>
+      </div>
+      <p>{copy.copyright}</p>
+    </footer>
+  </body>
+</html>

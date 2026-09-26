@@ -1,0 +1,35 @@
+---
+interface Props {
+  src: string | null;
+  kind: "image" | "video";
+  label: string;
+  emptyText: string;
+  filename: string;
+  alt: string;
+  className?: string;
+}
+
+const { src, kind, label, emptyText, filename, alt, className = "" } = Astro.props;
+---
+
+<div class:list={["media-slot", className, { "media-slot--empty": !src }]}>
+  {src ? (
+    kind === "video" ? (
+      <video src={src} aria-label={alt} controls playsinline preload="metadata"></video>
+    ) : (
+      <img src={src} alt={alt} loading="lazy" width="900" height="1600" />
+    )
+  ) : (
+    <div class="media-slot__placeholder" role="img" aria-label={`${label}: ${emptyText}`}>
+      <div class="media-slot__topline"><span class="media-slot__dot"></span><span>{label}</span></div>
+      <div class="media-slot__center">
+        <svg width="76" height="55" viewBox="0 0 76 55" fill="none" aria-hidden="true">
+          <path d="M4 28h9m5-10v20m9-32v44m10-25v6m10-19v32m10-39v46m10-22h5" stroke="currentColor" stroke-width="3" stroke-linecap="round" />
+        </svg>
+        <strong>{emptyText}</strong>
+        <span>{filename}</span>
+      </div>
+      <div class="media-slot__baseline"><span>TT / MEDIA</span><span>+</span></div>
+    </div>
+  )}
+</div>
