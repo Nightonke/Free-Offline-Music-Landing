@@ -55,5 +55,6 @@ DNS is managed in Tencent Cloud DNSPod. The apex has two GitHub Pages A records
 (`185.199.108.153` and `185.199.109.153`), and `www` has a CNAME to
 `Nightonke.github.io`. DNSPod's free plan rejected a third apex A record due
 to its per-host load-balancing limit; no paid DNS plan is required for the two
-active records. GitHub Pages creates the TLS certificate and should have
-**Enforce HTTPS** enabled once the certificate becomes available.
+active records. GitHub Pages has issued the apex-domain TLS certificate, and
+**Enforce HTTPS** is enabled. GitHub Pages may need additional time to issue a
+certificate for the optional `www` redirect.
