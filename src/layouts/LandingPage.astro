@@ -85,7 +85,6 @@ const appSchema = {
         </div>
 
         <div class="hero-stage" aria-label={copy.heroMediaLabel}>
-          <div class="stage-header"><span>TUNE / TRACE</span><span>01—03</span></div>
           <div class="phone-shell">
             <MediaSlot
               src={heroVideos[locale].src}
@@ -97,9 +96,6 @@ const appSchema = {
               alt={copy.heroMediaLabel}
               className="hero-media"
             />
-          </div>
-          <div class="stage-footer">
-            {copy.stageTags.map((tag, index) => <span><b>{String(index + 1).padStart(2, "0")}</b> {tag}</span>)}
           </div>
         </div>
       </section>
