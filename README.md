@@ -44,4 +44,16 @@ pages. Check those links and the App Store listing together before publishing.
 The free plan text reflects the current iOS implementation: unlimited saves,
 full playback for the first 30 saved songs, and 45-second previews afterward.
 
-No hosting or Git remote is configured yet.
+## Deployment
+
+The repository is hosted at
+`https://github.com/Nightonke/Free-Offline-Music-Landing`. Pushing to `main`
+builds and deploys the static site through `.github/workflows/deploy.yml` to
+GitHub Pages. The custom domain is `freeofflinemusic.com`.
+
+DNS is managed in Tencent Cloud DNSPod. The apex has two GitHub Pages A records
+(`185.199.108.153` and `185.199.109.153`), and `www` has a CNAME to
+`Nightonke.github.io`. DNSPod's free plan rejected a third apex A record due
+to its per-host load-balancing limit; no paid DNS plan is required for the two
+active records. GitHub Pages creates the TLS certificate and should have
+**Enforce HTTPS** enabled once the certificate becomes available.
