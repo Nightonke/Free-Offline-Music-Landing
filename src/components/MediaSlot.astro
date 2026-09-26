@@ -16,7 +16,7 @@ const { src, kind, label, emptyText, filename, alt, poster, className = "" } = A
 <div class:list={["media-slot", className, { "media-slot--empty": !src }]}>
   {src ? (
     kind === "video" ? (
-      <video src={src} poster={poster} aria-label={alt} autoplay muted loop controls playsinline preload="metadata"></video>
+      <video src={src} poster={poster} aria-label={alt} autoplay muted loop playsinline preload="metadata"></video>
     ) : (
       <img src={src} alt={alt} loading="lazy" width="900" height="1600" />
     )
