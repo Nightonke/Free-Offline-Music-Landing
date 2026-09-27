@@ -1,0 +1,133 @@
+---
+import { appStoreUrl, contactEmail, content, locales, privacyUrl, termsUrl, type Locale } from "../i18n/content";
+import { guideCopy, guidePath, guideSteps } from "../i18n/guide";
+import "../styles/site.css";
+import "../styles/guide.css";
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const copy = guideCopy[locale];
+const landing = content[locale];
+const currentLocale = locales.find((item) => item.code === locale)!;
+const mediaLocale = locale === "zh-Hans" ? "zh-Hans" : "en";
+const path = guidePath(locale);
+const canonical = new URL(path, Astro.site ?? "https://freeofflinemusic.com").href;
+const legalReturnQuery = locale === "en" ? "" : `?from=${encodeURIComponent(locale)}`;
+const chapters = [
+  { id: "start-recording", first: 0, last: 5 },
+  { id: "finish-recording", first: 6, last: 7 },
+  { id: "identify-and-save", first: 8, last: 12 },
+  { id: "listen", first: 13, last: 14 },
+] as const;
+---
+
+<!doctype html>
+<html lang={landing.lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f4f1e8" />
+    <title>{copy.nav} | TuneTrace</title>
+    <meta name="description" content={copy.description} />
+    <link rel="canonical" href={canonical} />
+    {locales.map((item) => <link rel="alternate" hreflang={item.code} href={new URL(guidePath(item.code), Astro.site ?? "https://freeofflinemusic.com").href} />)}
+    <link rel="alternate" hreflang="x-default" href="https://freeofflinemusic.com/guide/" />
+    <link rel="icon" type="image/png" href="/assets/app-icon.png" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content={`${copy.nav} | TuneTrace`} />
+    <meta property="og:description" content={copy.description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content={currentLocale.ogLocale} />
+  </head>
+  <body class="guide-page">
+    <a class="skip-link" href="#main">{landing.ui.skip}</a>
+    <div class="header-wrap">
+      <header class="site-header guide-header shell">
+        <a class="brand" href={landing.path} aria-label="TuneTrace">
+          <img src="/assets/app-icon.png" alt="" width="37" height="37" />
+          <span>TuneTrace <span class="brand-zh">{locale === "zh-Hans" ? "拾曲" : ""}</span></span>
+        </a>
+        <a class="guide-home" href={landing.path}>{copy.home}</a>
+        <div class="header-actions">
+          <details class="language-menu">
+            <summary aria-label={landing.ui.languages}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.5 3.8 5.5 3.8 9S14.5 18.5 12 21M12 3C9.5 5.5 8.2 8.5 8.2 12S9.5 18.5 12 21"/></svg>
+              <span>{currentLocale.name}</span>
+              <svg class="language-menu__chevron" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 5.25 4 4 4-4" /></svg>
+            </summary>
+            <div class="language-menu__panel">
+              {locales.map((item) => <a href={guidePath(item.code)} lang={item.code} aria-current={item.code === locale ? "page" : undefined}>{item.name}</a>)}
+            </div>
+          </details>
+          <a class="header-download" href={appStoreUrl} target="_blank" rel="noopener noreferrer">{landing.ui.getApp}<span aria-hidden="true">↗</span></a>
+        </div>
+      </header>
+    </div>
+
+    <main id="main" class="guide-main shell">
+      <section class="guide-hero">
+        <p class="eyebrow"><span class="eyebrow-pulse"></span>{copy.eyebrow}</p>
+        <h1>{copy.title}</h1>
+        <p class="guide-hero__description">{copy.description}</p>
+        <p class="guide-hero__notice">{copy.notice}</p>
+      </section>
+
+      <nav class="guide-index" aria-label={copy.jump}>
+        <strong>{copy.jump}</strong>
+        <ol>
+          {chapters.map((chapter, index) => (
+            <li><a href={`#${chapter.id}`}><span>{String(index + 1).padStart(2, "0")}</span>{copy.chapterTitles[index]}</a></li>
+          ))}
+        </ol>
+      </nav>
+
+      {chapters.map((chapter, chapterIndex) => (
+        <section class="guide-chapter" id={chapter.id} aria-labelledby={`${chapter.id}-title`}>
+          <div class="guide-chapter__heading">
+            <span class="guide-chapter__number">{String(chapterIndex + 1).padStart(2, "0")} / 04</span>
+            <h2 id={`${chapter.id}-title`}>{copy.chapterTitles[chapterIndex]}</h2>
+            <span class="guide-chapter__range">{String(chapter.first + 1).padStart(2, "0")}—{String(chapter.last + 1).padStart(2, "0")}</span>
+          </div>
+          <ol class="guide-steps" start={chapter.first + 1}>
+            {Array.from({ length: chapter.last - chapter.first + 1 }, (_, offset) => {
+              const index = chapter.first + offset;
+              const image = `/media/guide/${mediaLocale}/step-${index}.png`;
+              const caption = guideSteps[locale][index];
+              return (
+                <li class="guide-step" id={`step-${index + 1}`}>
+                  <div class="guide-step__copy">
+                    <span class="guide-step__number">{copy.step} {String(index + 1).padStart(2, "0")}</span>
+                    <p>{caption}</p>
+                  </div>
+                  <a class="guide-step__image" href={image} target="_blank" rel="noopener noreferrer" aria-label={`${copy.enlarge}: ${caption}`}>
+                    <img src={image} width="1320" height="2868" alt={caption} loading={index < 2 ? "eager" : "lazy"} decoding="async" />
+                  </a>
+                </li>
+              );
+            })}
+          </ol>
+        </section>
+      ))}
+
+      <section class="guide-ending">
+        <p class="kicker">TUNETRACE</p>
+        <h2>{landing.closingTitle}</h2>
+        <a class="button button-dark" href={appStoreUrl} target="_blank" rel="noopener noreferrer">{landing.download}<span aria-hidden="true">↗</span></a>
+      </section>
+    </main>
+
+    <footer class="site-footer shell">
+      <div class="footer-brand"><img src="/assets/app-icon.png" alt="" width="44" height="44" /><div><strong>TuneTrace</strong><span>{landing.footerSummary}</span></div></div>
+      <div class="footer-links">
+        <a href={`${privacyUrl}${legalReturnQuery}`}>{landing.privacy}</a>
+        <a href={`${termsUrl}${legalReturnQuery}`}>{landing.terms}</a>
+        <a href={`mailto:${contactEmail}`}>{landing.contact}</a>
+      </div>
+      <p>{landing.copyright}</p>
+    </footer>
+  </body>
+</html>

@@ -30,6 +30,13 @@ All languages except Simplified Chinese use the English video and screenshots.
 The source HEIF files were converted to transparent 787 × 1400 PNGs for browser
 support.
 
+The detailed guide is at `/guide/` and its eight localized equivalents. It
+shows all 15 screenshots from the iPhone app's recording tutorial, split into
+four chapters. The guide images live in `public/media/guide/`; Simplified
+Chinese uses `zh-Hans` images and the other languages use `en` images. Step
+captions are stored in `src/i18n/guideSteps.json`, with page copy in
+`src/i18n/guide.ts`. A dedicated section on the landing links to the guide.
+
 ## Content and links
 
 - Locale definitions and English/Simplified Chinese copy: `src/i18n/content.ts`

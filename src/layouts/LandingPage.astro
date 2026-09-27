@@ -2,6 +2,7 @@
 import MediaSlot from "../components/MediaSlot.astro";
 import { heroVideos, media, type MediaLocale } from "../config/media";
 import { appStoreUrl, contactEmail, content, locales, privacyUrl, termsUrl, type Locale } from "../i18n/content";
+import { guideCopy, guidePath } from "../i18n/guide";
 import "../styles/site.css";
 
 interface Props {
@@ -10,6 +11,7 @@ interface Props {
 
 const { locale } = Astro.props;
 const copy = content[locale];
+const guide = guideCopy[locale];
 const currentLocale = locales.find((item) => item.code === locale)!;
 const mediaLocale: MediaLocale = locale === "zh-Hans" ? "zh-Hans" : "en";
 const legalReturnQuery = locale === "en" ? "" : `?from=${encodeURIComponent(locale)}`;
@@ -58,6 +60,7 @@ const appSchema = {
         </a>
         <nav class="desktop-nav" aria-label={copy.ui.navigation}>
           <a href="#how-it-works">{copy.nav.how}</a>
+          <a href={guidePath(locale)}>{guide.nav}</a>
           <a href="#features">{copy.nav.features}</a>
           <a href="#faq">{copy.nav.faq}</a>
         </nav>
@@ -172,6 +175,22 @@ const appSchema = {
           </section>
         ))}
       </div>
+
+      <section class="guide-invite section shell" id="guide-invite" aria-labelledby="guide-invite-title">
+        <div class="guide-invite__panel">
+          <div class="guide-invite__copy">
+            <p class="kicker">{guide.teaserLabel}</p>
+            <h2 id="guide-invite-title">{guide.teaserTitle}</h2>
+            <p>{guide.teaserDescription}</p>
+            <a class="button button-dark" href={guidePath(locale)}>{guide.teaserAction}<span aria-hidden="true">↗</span></a>
+          </div>
+          <div class="guide-invite__chapters">
+            <ol>
+              {guide.chapterTitles.map((title, index) => <li><span>{String(index + 1).padStart(2, "0")}</span>{title}</li>)}
+            </ol>
+          </div>
+        </div>
+      </section>
 
       <section class="faq-section section shell" id="faq">
         <div class="faq-heading">
